@@ -49,9 +49,7 @@
     <!-- Chart Bar start -->
     <div class="col-xxl-12">
         <div class="card h-100 radius-8 border-0">
-            <div class="card-body p-24">
-                <div id="barChart"></div>
-            </div>
+            <div id="barChart"></div>
         </div>
     </div>
     <!-- Chart Bar End -->
@@ -94,17 +92,6 @@
         categories: @json($categories),
         labels: { style: { colors: '#ffffff' } }
       },
-      legend: {
-        position: 'bottom',
-        labels: { colors: '#ffffff' }
-      },
-      grid: {
-        borderColor: '#333',
-      },
-      tooltip: {
-        theme: 'dark'
-      },
-      background: '#000'
     };
   
     var chart = new ApexCharts(document.querySelector("#barChart"), options);

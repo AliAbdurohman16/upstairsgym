@@ -1,4 +1,4 @@
 
-<div class="navbar-header">
-    <img src="{{ asset('backend') }}/assets/images/logo.png" alt="site logo" width="120px">
+<div class="navbar-header d-flex justify-content-center">
+    <img src="{{ asset('backend') }}/assets/images/logo-upstairsgym-transparent.png" alt="site logo" width="150px">
 </div>

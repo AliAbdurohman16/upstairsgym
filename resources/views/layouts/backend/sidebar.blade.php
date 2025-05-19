@@ -4,8 +4,7 @@
     </button>
     <div>
         <a href="" class="sidebar-logo justify-content-center">
-            <img src="{{ asset('backend') }}/assets/images/logo.png" alt="site logo" class="light-logo">
-            <img src="{{ asset('backend') }}/assets/images/logo-icon.png" alt="site logo" class="logo-icon">
+            <img src="{{ asset('backend') }}/assets/images/logo-upstairsgym.jpeg" alt="site logo" class="light-logo">
         </a>
     </div>
     <div class="sidebar-menu-area">
