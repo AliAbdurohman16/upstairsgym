@@ -1,0 +1,92 @@
+<?php
+
+namespace App\Http\Controllers\Frontend;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+
+class HomeController extends Controller
+{
+    public function index(Request $request)
+    {
+        // Ambil tanggal yang dipilih dari query, default hari ini
+        $selectedDate = $request->query('date') ?? Carbon::today()->toDateString();
+
+        // Ambil semua tanggal unik dari tabel visitors
+        $availableDates = DB::table('visitors')
+            ->select('date')
+            ->distinct()
+            ->orderBy('date', 'asc')
+            ->pluck('date')
+            ->map(fn ($d) => Carbon::parse($d)->toDateString()) // pastikan formatnya sama
+            ->toArray();
+
+        // Cari index tanggal saat ini di array tanggal
+        $currentIndex = array_search($selectedDate, $availableDates);
+
+        // Tentukan tanggal sebelumnya dan sesudahnya
+        $previousDate = $currentIndex > 0 ? $availableDates[$currentIndex - 1] : null;
+        $nextDate = $currentIndex < count($availableDates) - 1 ? $availableDates[$currentIndex + 1] : null;
+
+        // Ambil data visitor sesuai tanggal yang dipilih
+        $rawData = DB::table('visitors')
+            ->whereDate('date', $selectedDate)
+            ->select('start_time', 'end_time', 'visitor_count')
+            ->orderBy('start_time')
+            ->get();
+
+        if ($rawData->isEmpty()) {
+            return view('backend.dashboard.index', [
+                'categories' => [],
+                'sepi' => [],
+                'normal' => [],
+                'ramai' => [],
+                'selectedDate' => $selectedDate,
+                'previousDate' => $previousDate,
+                'nextDate' => $nextDate,
+            ]);
+        }
+
+        // Hitung nilai maksimum visitor_count
+        $maxCount = $rawData->max('visitor_count');
+        $range = ceil($maxCount / 3);
+
+        $categories = [];
+        $sepi = [];
+        $normal = [];
+        $ramai = [];
+
+        foreach ($rawData as $item) {
+            $label = Carbon::parse($item->start_time)->format('H:i') . ' - ' .
+                     Carbon::parse($item->end_time)->format('H:i');
+
+            $categories[] = $label;
+
+            if ($item->visitor_count <= $range) {
+                $sepi[] = $item->visitor_count;
+                $normal[] = 0;
+                $ramai[] = 0;
+            } elseif ($item->visitor_count <= 2 * $range) {
+                $sepi[] = 0;
+                $normal[] = $item->visitor_count;
+                $ramai[] = 0;
+            } else {
+                $sepi[] = 0;
+                $normal[] = 0;
+                $ramai[] = $item->visitor_count;
+            }
+        }
+
+        return view('frontend.home.index', [
+            'categories' => $categories,
+            'sepi' => $sepi,
+            'normal' => $normal,
+            'ramai' => $ramai,
+            'selectedDate' => $selectedDate,
+            'previousDate' => $previousDate,
+            'nextDate' => $nextDate,
+        ]);
+    }
+}
