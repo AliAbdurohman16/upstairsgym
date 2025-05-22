@@ -49,10 +49,6 @@ class HomeController extends Controller
             ]);
         }
 
-        // Hitung nilai maksimum visitor_count
-        $maxCount = $rawData->max('visitor_count');
-        $range = ceil($maxCount / 3);
-
         $categories = [];
         $sepi = [];
         $normal = [];
@@ -64,18 +60,25 @@ class HomeController extends Controller
 
             $categories[] = $label;
 
-            if ($item->visitor_count <= $range) {
-                $sepi[] = $item->visitor_count;
+            $count = $item->visitor_count;
+
+            if ($count >= 1 && $count <= 5) {
+                $sepi[] = $count;
                 $normal[] = 0;
                 $ramai[] = 0;
-            } elseif ($item->visitor_count <= 2 * $range) {
+            } elseif ($count >= 6 && $count <= 10) {
                 $sepi[] = 0;
-                $normal[] = $item->visitor_count;
+                $normal[] = $count;
                 $ramai[] = 0;
+            } elseif ($count >= 11) {
+                $sepi[] = 0;
+                $normal[] = 0;
+                $ramai[] = $count;
             } else {
+                // Di luar rentang 1–20 dianggap tidak terklasifikasi
                 $sepi[] = 0;
                 $normal[] = 0;
-                $ramai[] = $item->visitor_count;
+                $ramai[] = 0;
             }
         }
 
