@@ -26,6 +26,27 @@ class HomeController extends Controller
         // Cari index tanggal saat ini di array tanggal
         $currentIndex = array_search($selectedDate, $availableDates);
 
+        if ($currentIndex === false) {
+            // Jika tidak ditemukan, cari tanggal terdekat berikutnya
+            $fallbackIndex = null;
+            foreach ($availableDates as $i => $date) {
+                if ($date >= $selectedDate) {
+                    $fallbackIndex = $i;
+                    break;
+                }
+            }
+
+            // Jika tidak ketemu tanggal setelahnya, ambil tanggal terakhir
+            if ($fallbackIndex === null && !empty($availableDates)) {
+                $fallbackIndex = count($availableDates) - 1;
+            }
+
+            if ($fallbackIndex !== null) {
+                $selectedDate = $availableDates[$fallbackIndex];
+                $currentIndex = $fallbackIndex;
+            }
+        }
+
         // Tentukan tanggal sebelumnya dan sesudahnya
         $previousDate = $currentIndex > 0 ? $availableDates[$currentIndex - 1] : null;
         $nextDate = $currentIndex < count($availableDates) - 1 ? $availableDates[$currentIndex + 1] : null;
