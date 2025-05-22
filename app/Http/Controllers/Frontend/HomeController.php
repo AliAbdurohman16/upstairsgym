@@ -37,18 +37,6 @@ class HomeController extends Controller
             ->orderBy('start_time')
             ->get();
 
-        if ($rawData->isEmpty()) {
-            return view('backend.dashboard.index', [
-                'categories' => [],
-                'sepi' => [],
-                'normal' => [],
-                'ramai' => [],
-                'selectedDate' => $selectedDate,
-                'previousDate' => $previousDate,
-                'nextDate' => $nextDate,
-            ]);
-        }
-
         $categories = [];
         $sepi = [];
         $normal = [];
